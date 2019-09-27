@@ -68,7 +68,7 @@ bool Texture::LoadTextureA() {
 }
 
 void Texture::UseTexture() { //UseTexture(int offset) 
-    glActiveTexture(GL_TEXTURE0); //Texture Unit 0
+    glActiveTexture(GL_TEXTURE1); //Texture Unit 1
     glBindTexture(GL_TEXTURE_2D, textureID);
 }
 

@@ -295,7 +295,7 @@ int main() {
 
     
     pointLights[0] = PointLight(0.0f, 1.0f, 0.0f,
-                                0.1f, 0.3f,
+                                0.7f, 0.3f,
                                 -4.0f, 0.0f, 0.0f,
                                 0.3f, 0.2f, 0.1f,
                                 screenWidth, screenWidth,

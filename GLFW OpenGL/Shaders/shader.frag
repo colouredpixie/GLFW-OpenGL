@@ -9,7 +9,7 @@ in vec4 DirectionalLightSpacePos;
 out vec4 colour;
 
 const int MAX_POINT_LIGHTS = 3;
-const int MAX_SPOT_LIGHTS = 5;
+const int MAX_SPOT_LIGHTS = 3;
 
 struct Light {
     vec3 colour;
@@ -95,14 +95,32 @@ float CalcDirectionalShadowFactor(DirectionalLight light) {
 
 float CalcOmniShadowFactor(PointLight light, int shadowIndex) {
     vec3 fragToLight = FragPos - light.position;
-    float closest = texture(omniShadowMaps[shadowIndex].shadowMap, fragToLight).r; //??
-    
-    closest *= omniShadowMaps[shadowIndex].farPlane;
-    
     float current = length(fragToLight);
-    
+        
+    float shadow = 0.0;
     float bias = 0.05;
-    float shadow = (current - bias) > closest ? 1.0 : 0.0;
+    float samples = 4.0;
+    float offset = 0.1;
+//    float closest = 0.0;
+    float closest = texture(omniShadowMaps[shadowIndex].shadowMap, fragToLight).r;
+    closest *= omniShadowMaps[shadowIndex].farPlane;
+
+    shadow = (current - bias) > closest ? 1.0 : 0.0;
+    
+//    for (float x = -offset; x < offset; x *= offset / (samples * 0.5)) {
+//        for (float y = -offset; y < offset; y *= offset / (samples * 0.5)) {
+//            for (float z = -offset; z < offset; z *= offset / (samples * 0.5)) {
+//                closest = texture(omniShadowMaps[shadowIndex].shadowMap, fragToLight + vec3(x, y, z)).r;
+//                closest *= omniShadowMaps[shadowIndex].farPlane;
+//
+//                if ((current - bias) > closest) {
+//                    shadow += 1.0;
+//                }
+//            }
+//        }
+//    }
+//
+//    shadow /= 64;
     
     return shadow;
 }
