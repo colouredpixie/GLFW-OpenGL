@@ -29,6 +29,8 @@ public:
     GLfloat GetFarPlane();
     glm::vec3 GetPosition();
     
+    void Toggle() { isOn = !isOn; }
+    
     ~PointLight();
     
 protected:
@@ -38,5 +40,6 @@ protected:
     
     GLfloat farPlane;
     
+    bool isOn;
 };
 

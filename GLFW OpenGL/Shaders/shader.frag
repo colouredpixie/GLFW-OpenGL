@@ -1,4 +1,4 @@
-#version 330
+#version 410
 
 in vec4 vCol;
 in vec2 texCoord;
@@ -62,6 +62,16 @@ uniform Material material;
 
 uniform vec3 eyePosition;
 
+vec3 gridSamplingDisk[20] = vec3[]
+(
+   vec3(1, 1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1, 1,  1),
+   vec3(1, 1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
+   vec3(1, 1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1, 1,  0),
+   vec3(1, 0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1, 0, -1),
+   vec3(0, 1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0, 1, -1)
+);
+
+
 float CalcDirectionalShadowFactor(DirectionalLight light) {
     vec3 projCoords = DirectionalLightSpacePos.xyz / DirectionalLightSpacePos.w;
     projCoords = (projCoords * 0.5) + 0.5;
@@ -99,28 +109,28 @@ float CalcOmniShadowFactor(PointLight light, int shadowIndex) {
         
     float shadow = 0.0;
     float bias = 0.05;
-    float samples = 4.0;
-    float offset = 0.1;
+    
+//    int samples = 20;
+//    
+//    float viewDistance = length(eyePosition - FragPos);
+//    float diskRadius = (1.0 + (viewDistance / omniShadowMaps[shadowIndex].farPlane)) / 25.0;
+//
 //    float closest = 0.0;
+//    for(int i = 0; i < samples; i++) {
+//        closest = texture(omniShadowMaps[shadowIndex].shadowMap, fragToLight + (gridSamplingDisk[i] * diskRadius)).r;
+//        closest *= omniShadowMaps[shadowIndex].farPlane;
+//
+//        if ((current - bias) > closest) {
+//            shadow += 1.0;
+//        }
+//    }
+//
+//    shadow /= float(samples);
+    
     float closest = texture(omniShadowMaps[shadowIndex].shadowMap, fragToLight).r;
     closest *= omniShadowMaps[shadowIndex].farPlane;
 
     shadow = (current - bias) > closest ? 1.0 : 0.0;
-    
-//    for (float x = -offset; x < offset; x *= offset / (samples * 0.5)) {
-//        for (float y = -offset; y < offset; y *= offset / (samples * 0.5)) {
-//            for (float z = -offset; z < offset; z *= offset / (samples * 0.5)) {
-//                closest = texture(omniShadowMaps[shadowIndex].shadowMap, fragToLight + vec3(x, y, z)).r;
-//                closest *= omniShadowMaps[shadowIndex].farPlane;
-//
-//                if ((current - bias) > closest) {
-//                    shadow += 1.0;
-//                }
-//            }
-//        }
-//    }
-//
-//    shadow /= 64;
     
     return shadow;
 }

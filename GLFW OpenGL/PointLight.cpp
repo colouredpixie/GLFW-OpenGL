@@ -6,6 +6,8 @@ PointLight::PointLight() {
     constant = 1.0f; //to have a divider not equal to 0
     linear = 0.0f;
     exponent = 0.0f;
+    
+    isOn = true;
 }
 
 PointLight::PointLight(GLfloat red, GLfloat green, GLfloat blue,
@@ -26,14 +28,23 @@ PointLight::PointLight(GLfloat red, GLfloat green, GLfloat blue,
     
     shadowMap = new OmniShadowMap();
     shadowMap->Init(shadowWidth, shadowHeight);
+    
+    isOn = true;
+
 }
 
 void PointLight::UseLight(GLuint ambientIntensityLocation, GLuint ambientColourLocation,
                           GLuint diffuseIntensityLocation, GLuint positionLocation,
                           GLuint constantLocation, GLuint linearLocation, GLuint exponentLocation) {
     glUniform3f(ambientColourLocation, colour.x, colour.y, colour.z);
+    
+    if (isOn) {
     glUniform1f(ambientIntensityLocation, ambientIntensity);
     glUniform1f(diffuseIntensityLocation, diffuseIntensity);
+    } else {
+        glUniform1f(ambientIntensityLocation, 0.0f);
+        glUniform1f(diffuseIntensityLocation, 0.0f);
+    }
     
     glUniform3f(positionLocation, position.x, position.y, position.z);
     

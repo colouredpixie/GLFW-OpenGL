@@ -258,8 +258,8 @@ void RenderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix) {
     shaderList[0].SetTexture(1);
     shaderList[0].SetDirectionalShadowMap(2);
     
-    //glm::vec3 lowerLight = glm::vec3(0.0f, 1.0f, 0.0f);
-    //spotLights[1].SetFlash((camera.getCameraPosition() - lowerLight), camera.getCameraDirection());
+    glm::vec3 lowerLight = glm::vec3(0.0f, 1.0f, 0.0f);
+    spotLights[1].SetFlash((camera.getCameraPosition() - lowerLight), camera.getCameraDirection());
     
     //shaderList[0].ValidateProgram();
     RenderScene();
@@ -289,13 +289,13 @@ int main() {
     plant.LoadModel("Models/01Alocasia_obj.obj");
     
     mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
-                                 0.7f, 0.3f,
+                                 0.1f, 0.1f,
                                  0.0f, -15.0f, -10.0f,
                                  (screenWidth * 2), (screenWidth * 2));
 
     
     pointLights[0] = PointLight(0.0f, 1.0f, 0.0f,
-                                0.7f, 0.3f,
+                                1.0f, 2.0f,         //0.7f, 0.3f,
                                 -4.0f, 0.0f, 0.0f,
                                 0.3f, 0.2f, 0.1f,
                                 screenWidth, screenWidth,
@@ -308,26 +308,26 @@ int main() {
 //                                screenWidth, screenWidth,
 //                                0.01f, 100.0f);
 //    pointLightCount++;
-//
-//
-//    spotLights[0] = SpotLight(0.2f, 0.2f, 0.8f,
-//                              0.0f, 2.0f,
-//                              1.0f, 3.0f, -1.0f,
-//                              0.0f, -1.0f, 1.0f,
-//                              1.0f, 0.1f, 0.0f,
-//                              20.0f,
-//                              screenWidth, screenWidth,
-//                              0.05f, 20.0f);
-//    spotLightCount++;
-//    spotLights[1] = SpotLight(0.7f, 1.0f, 1.0f,
-//                              0.0f, 0.0f,       // 0.5f, 0.1f,
-//                              0.0f, 0.0f, 0.0f,
-//                              -100.0f, -1.0f, 0.0f,
-//                              0.0f, 0.1f, 0.0f,
-//                              20.0f,
-//                              screenWidth, screenWidth,
-//                              0.05f, 20.0f);
-//    spotLightCount++;
+
+
+    spotLights[0] = SpotLight(0.2f, 0.2f, 1.0f,
+                              1.0f, 2.0f,
+                              1.0f, 3.0f, -1.0f,
+                              0.0f, -1.0f, 1.0f,
+                              1.0f, 0.1f, 0.0f,
+                              20.0f,
+                              screenWidth, screenWidth,
+                              0.05f, 20.0f);
+    spotLightCount++;
+    spotLights[1] = SpotLight(0.9f, 0.9f, 0.9f,
+                              0.5f, 0.7f,
+                              0.0f, 0.0f, 0.0f,
+                              -100.0f, -1.0f, 0.0f,
+                              0.0f, 0.1f, 0.0f,
+                              20.0f,
+                              screenWidth, screenWidth,
+                              0.05f, 20.0f);
+    spotLightCount++;
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f);
 
@@ -341,6 +341,11 @@ int main() {
 
         camera.keyControl(mainWindow.getKeys(), deltaTime);
         camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+        
+        if(mainWindow.getKeys()[GLFW_KEY_L]) {
+            spotLights[1].Toggle();
+            mainWindow.getKeys()[GLFW_KEY_L] = false;
+        }
 
         DirectionalShadowMapPass(&mainLight);
         for (size_t i = 0; i < pointLightCount; i++) {

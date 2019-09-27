@@ -26,8 +26,14 @@ void SpotLight::UseLight(GLuint ambientIntensityLocation, GLuint ambientColourLo
                          GLuint constantLocation, GLuint linearLocation, GLuint exponentLocation,
                          GLuint edgeLocation) {
     glUniform3f(ambientColourLocation, colour.x, colour.y, colour.z);
+    
+    if (isOn) {
     glUniform1f(ambientIntensityLocation, ambientIntensity);
     glUniform1f(diffuseIntensityLocation, diffuseIntensity);
+    } else {
+        glUniform1f(ambientIntensityLocation, 0.0f);
+        glUniform1f(diffuseIntensityLocation, 0.0f);
+    }
     
     glUniform3f(positionLocation, position.x, position.y, position.z);
     glUniform3f(directionLocation, direction.x, direction.y, direction.z);
