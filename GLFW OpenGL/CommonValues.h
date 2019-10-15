@@ -3,6 +3,7 @@
 #ifndef CommonValues_h
 #define CommonValues_h
 
+#include "stb_image.h"
 
 #endif /* CommonValues_h */
 

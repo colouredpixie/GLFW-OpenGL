@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef Shader_hpp
 #define Shader_hpp
 

@@ -27,6 +27,7 @@
 #include "SpotLight.hpp"
 #include "Material.hpp"
 #include "Model.hpp"
+#include "Skybox.hpp"
 
 
 const float toRadians = 3.14159265f / 180.0f;
@@ -60,6 +61,8 @@ PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
 unsigned int pointLightCount = 0;
 unsigned int spotLightCount = 0;
+
+Skybox skybox;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
@@ -227,6 +230,14 @@ void OmniShadowMapPass(PointLight* light) {
 }
 
 void RenderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix) {
+    glViewport(0, 0, screenWidth, screenHeight);
+    
+    //Clear the window
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    skybox.DrawSkyBox(viewMatrix, projectionMatrix);
+    
     shaderList[0].UseShader();
     
     uniformModel = shaderList[0].GetModelLocation();
@@ -235,12 +246,6 @@ void RenderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix) {
     uniformEyePosition = shaderList[0].GetEyePositionLocation();
     uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
     uniformShininess = shaderList[0].GetShininessLocation();
-    
-    glViewport(0, 0, screenWidth, screenHeight);
-    
-    //Clear the window
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
@@ -289,7 +294,7 @@ int main() {
     plant.LoadModel("Models/01Alocasia_obj.obj");
     
     mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
-                                 0.1f, 0.1f,
+                                 0.7f, 0.3f,
                                  0.0f, -15.0f, -10.0f,
                                  (screenWidth * 2), (screenWidth * 2));
 
@@ -310,25 +315,36 @@ int main() {
 //    pointLightCount++;
 
 
-    spotLights[0] = SpotLight(0.2f, 0.2f, 1.0f,
-                              1.0f, 2.0f,
-                              1.0f, 3.0f, -1.0f,
-                              0.0f, -1.0f, 1.0f,
-                              1.0f, 0.1f, 0.0f,
-                              20.0f,
-                              screenWidth, screenWidth,
-                              0.05f, 20.0f);
-    spotLightCount++;
-    spotLights[1] = SpotLight(0.9f, 0.9f, 0.9f,
-                              0.5f, 0.7f,
-                              0.0f, 0.0f, 0.0f,
-                              -100.0f, -1.0f, 0.0f,
-                              0.0f, 0.1f, 0.0f,
-                              20.0f,
-                              screenWidth, screenWidth,
-                              0.05f, 20.0f);
-    spotLightCount++;
+//    spotLights[0] = SpotLight(0.2f, 0.2f, 1.0f,
+//                              1.0f, 2.0f,
+//                              1.0f, 3.0f, -1.0f,
+//                              0.0f, -1.0f, 1.0f,
+//                              1.0f, 0.1f, 0.0f,
+//                              20.0f,
+//                              screenWidth, screenWidth,
+//                              0.05f, 20.0f);
+//    spotLightCount++;
+//    spotLights[1] = SpotLight(0.9f, 0.9f, 0.9f,
+//                              0.5f, 0.7f,
+//                              0.0f, 0.0f, 0.0f,
+//                              -100.0f, -1.0f, 0.0f,
+//                              0.0f, 0.1f, 0.0f,
+//                              20.0f,
+//                              screenWidth, screenWidth,
+//                              0.05f, 20.0f);
+//    spotLightCount++;
 
+    std::vector<std::string> skyboxFaces;
+    skyboxFaces.push_back("Textures/envmap/stormydays_rt.tga");
+    skyboxFaces.push_back("Textures/envmap/stormydays_lf.tga");
+    skyboxFaces.push_back("Textures/envmap/stormydays_up.tga");
+    skyboxFaces.push_back("Textures/envmap/stormydays_dn.tga");
+    skyboxFaces.push_back("Textures/envmap/stormydays_bk.tga");
+    skyboxFaces.push_back("Textures/envmap/stormydays_ft.tga");
+    
+    skybox = Skybox(skyboxFaces);
+
+    
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f);
 
     //Loop
